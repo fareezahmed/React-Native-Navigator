@@ -1,46 +1,33 @@
 import React, { Component } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
-import { Router } from 'react-native-router-flux';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import firebase from 'firebase';
+import ReduxThunk from 'redux-thunk';
+import reducers from './reducers';
+import Router from './Router';
 
-export default class App extends Component {
-    render() {
-      return (
-        <View style={styles.container}>
-          <Text style={styles.welcome}>
-            Welcome to React Native!
-            Router
-          </Text>
-          <Text style={styles.instructions}>
-            To get started, edit index.android.js
-          </Text>
-          <Text style={styles.instructions}>
-            Double tap R on your keyboard to reload,{'\n'}
-            Shake or press menu button for dev menu
-          </Text>
-        </View>
-      );
-    }
+class App extends Component {
+  componentWillMount() {
+    const config = {
+      apiKey: 'AIzaSyBR4FTGiOcTZ5OBNi6thE0KhCDR3PaOtQM',
+      authDomain: 'manager-2328b.firebaseapp.com',
+      databaseURL: 'https://manager-2328b.firebaseio.com',
+      storageBucket: 'manager-2328b.appspot.com',
+      messagingSenderId: '193075244299'
+    };
+
+    firebase.initializeApp(config);
   }
-  
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#F5FCFF',
-    },
-    welcome: {
-      fontSize: 20,
-      textAlign: 'center',
-      margin: 10,
-    },
-    instructions: {
-      textAlign: 'center',
-      color: '#333333',
-      marginBottom: 5,
-    },
-  });
+
+  render() {
+    const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
+
+    return (
+      <Provider store={store}>
+        <Router />
+      </Provider>
+    );
+  }
+}
+
+export default App;
